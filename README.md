@@ -1,7 +1,7 @@
 # explore-new-languages
 A repository of simple but significant exercises to test the capabilities of languages I want to learn.
 
-## Exercise requirements
+## Exercises requirements
 Each exercise (AKA kata) will be on it's own folder, with a readme that explains the requirements of the exercise to be considered complete,
 some extra features that will be nice to have but  are not mandatory and a table comparing some objective and some subjective key points of the implementation
 on each language
