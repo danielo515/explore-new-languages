@@ -1,5 +1,6 @@
 import os
 from os import listdir
+from argparse import ArgumentParser
 from os.path import isdir,join
 
 middle  = '├'
@@ -39,5 +40,8 @@ def prettyPrint(treeInfo):
         connections = [x*scale for x in findConnections(depth,treeInfo[idx:])]
         print("%s%s %s"%(addDepth(depth*scale,connections), prefix, name))
 
-folderInfo = traverse(".")
+parser = ArgumentParser(description="list a folder as a tree")
+parser.add_argument("folder",default="./", type=str)
+args = parser.parse_args()
+folderInfo = traverse(args.folder)
 print(prettyPrint(folderInfo))
