@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -17,13 +18,18 @@ type Node struct {
 
 type depthInfo map[int]bool
 
+var space = " "
+var pipe = "│"
+var tube = "├"
+var last = "└"
+
 func prefixStr(size int, belowDepths depthInfo) string {
 	var res s.Builder
 	for i := 0; i < size; i++ {
 		if belowDepths[i] {
-			fmt.Fprintf(&res, " │")
+			fmt.Fprintf(&res, pipe)
 		} else {
-			fmt.Fprintf(&res, "  ")
+			fmt.Fprintf(&res, space)
 		}
 	}
 	return res.String()
@@ -32,11 +38,11 @@ func prefixStr(size int, belowDepths depthInfo) string {
 func (n Node) LowerNodeDepths(belowNodes []Node) depthInfo {
 	res := make(depthInfo)
 	depth := n.Depth
-  // fmt.Println(n, belowNodes)
+	// fmt.Println(n, belowNodes)
 	for _, node := range belowNodes {
 		if depth > node.Depth {
 			depth = node.Depth
-      res[depth] = true
+			res[depth] = true
 		}
 		if depth == 0 {
 			break
@@ -48,9 +54,9 @@ func (n Node) LowerNodeDepths(belowNodes []Node) depthInfo {
 func (n Node) Format(belowNodes []Node) string {
 	belowDepths := n.LowerNodeDepths(belowNodes)
 	prefix := prefixStr(n.Depth, belowDepths)
-	symbol := " ├"
+	symbol := tube
 	if n.isLast {
-		symbol = " └"
+		symbol = last
 	}
 	return fmt.Sprintf("%s%s %s %d", prefix, symbol, n.Name, n.Depth)
 }
@@ -87,7 +93,17 @@ func scanDir(dirname string) {
 }
 
 func main() {
-	root := "../../"
+	spacing := flag.Int("s", 4, "spacing")
+	root := "./"
+	flag.Parse()
+	padding := s.Repeat(" ", *spacing)
+	if flag.NArg() > 0 {
+		root = flag.Arg(0)
+	}
+	pipe = padding + pipe
+	last = padding + last
+	tube = padding + tube
+	space = padding
 	fmt.Println(root)
 	scanDir(root)
 }
