@@ -22,6 +22,7 @@ var space = " "
 var pipe = "│"
 var tube = "├"
 var last = "└"
+var showDepth = false
 
 func prefixStr(size int, belowDepths depthInfo) string {
 	var res s.Builder
@@ -58,7 +59,10 @@ func (n Node) Format(belowNodes []Node) string {
 	if n.isLast {
 		symbol = last
 	}
-	return fmt.Sprintf("%s%s %s %d", prefix, symbol, n.Name, n.Depth)
+	if showDepth {
+		return fmt.Sprintf("%s%s %s %d", prefix, symbol, n.Name, n.Depth)
+	}
+	return fmt.Sprintf("%s%s %s ", prefix, symbol, n.Name)
 }
 
 func readDir(dir string) []os.FileInfo {
@@ -94,6 +98,7 @@ func scanDir(dirname string) {
 
 func main() {
 	spacing := flag.Int("s", 4, "spacing")
+	flag.BoolVar(&showDepth, "debug", false, "Shows debug info (eg, depth)")
 	root := "./"
 	flag.Parse()
 	padding := s.Repeat(" ", *spacing)
