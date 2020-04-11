@@ -6,6 +6,7 @@ type
   FileInfo = object
     name*: string
     depth*: int
+    isLast*: bool
 type
   Config = object
     space*: string
@@ -18,6 +19,7 @@ proc traverse_dir(dir:string, depth=0): seq[FileInfo] =
     result.add FileInfo(name:path.splitPath.tail, depth:depth) 
     if kind == pcDir:
       result = result.concat traverse_dir(path, depth+1)
+  result[^1].isLast = true
 
 
 iterator items*[T](s: Slice[T]): T =
@@ -33,7 +35,8 @@ proc printFile(file:FileInfo, idx: int, files: seq[FileInfo], conf: Config) =
       depth = f.depth
       row[depth] = conf.pipe
 
-  echo(row.join, conf.middle, file.name)
+  let pipe = if file.isLast: conf.last else: conf.middle
+  echo(row.join, pipe, file.name)
   
 
 when isMainModule:
