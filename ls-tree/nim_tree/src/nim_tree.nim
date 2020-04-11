@@ -15,11 +15,12 @@ type
     last*: string
 
 proc traverse_dir(dir:string, depth=0): seq[FileInfo] =
-  for kind, path in walkDir(dir):
-    result.add FileInfo(name:path.splitPath.tail, depth:depth) 
+  let files = toSeq walkDir(dir)
+  let last = files.len-1
+  for idx, (kind, path ) in files:
+    result.add FileInfo(name:path.splitPath.tail, depth:depth, isLast: idx == last)
     if kind == pcDir:
       result = result.concat traverse_dir(path, depth+1)
-  result[^1].isLast = true
 
 proc printFile(file:FileInfo, idx: int, files: seq[FileInfo], conf: Config) =
   var depth = file.depth
