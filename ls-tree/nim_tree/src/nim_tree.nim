@@ -43,9 +43,9 @@ when isMainModule:
   let spacing = 4
   let conf = Config(
     space: " ".repeat(spacing),
-    middle: "├".indent(spacing),
-    pipe: "│".indent(spacing),
-    last: "└".indent(spacing))
+    middle: "├ ".indent(spacing),
+    pipe: "│ ".indent(spacing),
+    last: "└ ".indent(spacing))
 
   for idx, file in files:
     file.printFile(idx, files,conf)
