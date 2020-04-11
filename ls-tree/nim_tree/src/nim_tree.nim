@@ -21,11 +21,6 @@ proc traverse_dir(dir:string, depth=0): seq[FileInfo] =
       result = result.concat traverse_dir(path, depth+1)
   result[^1].isLast = true
 
-
-iterator items*[T](s: Slice[T]): T =
-  for i in s.a .. s.b:
-    yield i
-  
 proc printFile(file:FileInfo, idx: int, files: seq[FileInfo], conf: Config) =
   var depth = file.depth
   var row = newSeqWith(depth, conf.space)
