@@ -1,12 +1,12 @@
 # This is just an example to get you started. A typical binary package
 # uses this file as the main entry point of the application.
-import os, sequtils, strutils
+import os, sequtils, strutils, parseopt
 
 type 
   FileInfo = object
-    name*: string
-    depth*: int
-    isLast*: bool
+    name: string
+    depth: int
+    isLast: bool
 type
   Config = object
     space*: string
@@ -34,17 +34,49 @@ proc printFile(file:FileInfo, idx: int, files: seq[FileInfo], conf: Config) =
   let pipe = if file.isLast: conf.last else: conf.middle
   echo(row.join, pipe, file.name)
   
-
-when isMainModule:
-  let dir = "../"
-  echo(dir)
-  let files = traverse_dir(dir)
-  let spacing = 4
-  let conf = Config(
+proc createConfig(spacing=2): Config =
+  result = Config(
     space: " ".repeat(spacing),
     middle: "├ ".indent(spacing),
     pipe: "│ ".indent(spacing),
     last: "└ ".indent(spacing))
 
+proc help() = 
+  echo "Renders a folder as a tree"
+  echo "Usage:"
+  echo ""
+  echo "\tnim-tree [OPTIONS] PATH"
+  echo ""
+  echo "Options:"
+  echo "  --spacing=N  The separation to apply. N must be a positive number"
+  echo "  -h, --help   Displays this help message"
+  echo ""
+  echo "Arguments:"
+  echo "  PATH         Must be a valid directory"
+  quit 0
+
+proc getArguments(): ( string, Config ) =
+  var dir= "./"
+  var conf= createConfig()
+  for kind, key, val in getopt(longNoVal = @["bla"]):
+    case kind
+    of cmdEnd: assert(false) # cannot happen
+    of cmdArgument: dir = key 
+    of cmdLongOption, cmdShortOption:
+      case key
+      of "spacing": 
+        try:
+          conf = createConfig parseInt(val)
+        except:
+          quit("--spacing requires a numeric value")
+      of "help", "h": help()
+      # of "version", "v": writeVersion()
+
+  result = (dir, conf)
+
+when isMainModule:
+  let (dir,conf) = getArguments()
+  let files = traverse_dir(dir)
+  echo(dir)
   for idx, file in files:
     file.printFile(idx, files,conf)
