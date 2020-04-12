@@ -30,6 +30,7 @@ proc printFile(file:FileInfo, idx: int, files: seq[FileInfo], conf: Config) =
     if f.depth < depth:
       depth = f.depth
       row[depth] = conf.pipe
+    if depth == 0: break
 
   let pipe = if file.isLast: conf.last else: conf.middle
   echo(row.join, pipe, file.name)
